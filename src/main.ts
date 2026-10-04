@@ -51,7 +51,10 @@ enterButton.addEventListener('click',()=>{
  const playback=audioService.play(song,title,'Doom Kitty');
  document.body.classList.remove('awaiting-entry');
  document.querySelector('#app-root')!.removeAttribute('inert');
- document.querySelector<HTMLElement>('#entrance')!.hidden=true;
+ const entrance=document.querySelector<HTMLElement>('#entrance')!;
+ entrance.classList.add('entering');
+ enterButton.disabled=true;
+ window.setTimeout(()=>{entrance.hidden=true;},matchMedia('(prefers-reduced-motion: reduce)').matches?0:550);
  playback.catch(()=>{error.textContent='Tap the player’s play button to retry.';});
  document.querySelector<HTMLButtonElement>('.home-player .play-pause-btn')?.focus({preventScroll:true});
 });
