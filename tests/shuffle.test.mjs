@@ -1,0 +1,3 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {ShuffleBag} from '../src/shuffle.mjs';
+test('each cycle includes every clip and never repeats at the boundary',()=>{const bag=new ShuffleBag(['a','b','c']);let previous;for(let cycle=0;cycle<100;cycle++){const seen=[];for(let i=0;i<3;i++){const next=bag.next();assert.notEqual(next,previous);seen.push(next);previous=next;}assert.equal(new Set(seen).size,3);}});
+test('empty and single clip libraries',()=>{assert.equal(new ShuffleBag([]).next(),undefined);const bag=new ShuffleBag(['a']);assert.equal(bag.next(),'a');assert.equal(bag.next(),'a');});

@@ -1,0 +1,1 @@
+{"name":"doom-kitty","version":"0.1.0","private":true,"type":"module","scripts":{"dev":"vite --host 0.0.0.0","build":"node scripts/media-manifest.mjs && tsc --noEmit && vite build","test":"node --test tests/*.test.mjs","preview":"vite preview --host 0.0.0.0"},"devDependencies":{"typescript":"^5.3.3","vite":"^7.3.1"}}
