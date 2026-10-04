@@ -142,7 +142,7 @@ m-nav .logo img{width:140px;height:60px;object-fit:contain;filter:url(#logo-tran
 
 /* Give the portrait analyzer a generous stage without stretching its drawing. */
 @media (max-width:900px) and (orientation:portrait) {
- .home-player { --mobile-analyzer-height:clamp(180px,30svh,280px); }
+ .home-player { --mobile-analyzer-height:100px; }
  .home-player .visualizer-placeholder { height:var(--mobile-analyzer-height) !important; }
  .home-player canvas#visualizer { height:var(--mobile-analyzer-height) !important; }
 }
