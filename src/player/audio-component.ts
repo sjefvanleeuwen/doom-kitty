@@ -482,7 +482,8 @@ export class MagazineAudioPlayer extends HTMLElement {
                 if (dataArray) {
                     const index = Math.floor(Math.pow(i / actualBarCount, 1.45) * (dataArray.length * 0.75));
                     const value = dataArray[index] || 0;
-                    const hScale = this.vizMode === 'both' ? 0.15 : 0.25;
+                    const portraitHome = this.closest('.home-player') && window.matchMedia('(max-width:900px) and (orientation:portrait)').matches;
+                    const hScale = portraitHome ? 0.4 : (this.vizMode === 'both' ? 0.15 : 0.25);
                     targetH = (Math.pow(value / 255, 1.5)) * (canvas.height * hScale);
                     if (targetH < 2) targetH = 2;
                     
