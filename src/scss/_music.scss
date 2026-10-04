@@ -1,0 +1,193 @@
+.music-featured {
+    margin-bottom: 60px;
+}
+
+.featured-track {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 0;
+    text-decoration: none;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    @media (max-width: 900px) {
+        grid-template-columns: 1fr;
+    }
+    
+    &:hover {
+        border-color: var(--theme-gold, #C5A028);
+        transform: translateY(-5px);
+        background: rgba(255,255,255,0.05);
+        
+        .featured-image img {
+            transform: scale(1.03);
+        }
+        
+        h2 {
+            color: var(--theme-gold, #C5A028);
+        }
+    }
+    
+    .featured-image {
+        overflow: hidden;
+        height: 450px;
+        
+        @media (max-width: 900px) {
+            height: 300px;
+        }
+        
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+    }
+    
+    .featured-content {
+        padding: 60px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        
+        @media (max-width: 900px) {
+            padding: 40px;
+        }
+    }
+    
+    .featured-category {
+        font-family: var(--font-pixel, monospace);
+        font-size: 0.8rem;
+        letter-spacing: 4px;
+        color: var(--theme-gold, #C5A028);
+        margin-bottom: 20px;
+        text-transform: uppercase;
+    }
+    
+    h2 {
+        font-family: var(--font-header);
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 20px;
+        line-height: 1.1;
+        transition: color 0.3s;
+    }
+
+    p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: rgba(255,255,255,0.7);
+        margin-bottom: 30px;
+    }
+
+    .featured-meta {
+        font-family: var(--font-modern-wide, sans-serif);
+        font-size: 0.7rem;
+        letter-spacing: 2px;
+        color: rgba(255,255,255,0.4);
+        text-transform: uppercase;
+    }
+}
+
+.music-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 40px;
+    margin-top: 60px;
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .music-card {
+        text-decoration: none;
+        display: block;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+        position: relative;
+
+        &:hover {
+            border-color: var(--theme-gold, #C5A028);
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.05);
+
+            .track-cover img {
+                transform: scale(1.1);
+            }
+
+            .track-info h3 {
+                color: var(--theme-gold, #C5A028);
+            }
+        }
+
+        .track-cover {
+            aspect-ratio: 1/1;
+            overflow: hidden;
+            position: relative;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.8s ease;
+            }
+
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 60%;
+                background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            }
+        }
+
+        .track-info {
+            padding: 25px;
+
+            .track-meta {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+
+                .track-artist {
+                    font-family: var(--font-pixel, monospace);
+                    font-size: 0.7rem;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                    color: var(--theme-gold, #C5A028);
+                }
+
+                .track-type {
+                    font-size: 0.6rem;
+                    background: rgba(255,255,255,0.1);
+                    padding: 2px 8px;
+                    border-radius: 4px;
+                    letter-spacing: 1px;
+                }
+            }
+
+            h3 {
+                font-family: var(--font-header);
+                font-size: 1.5rem;
+                margin: 5px 0;
+                transition: color 0.3s ease;
+            }
+
+            p {
+                font-size: 0.9rem;
+                color: rgba(255,255,255,0.6);
+                line-height: 1.5;
+                margin-top: 10px;
+            }
+        }
+    }
+}

@@ -1,21 +1,9 @@
 # Doom Kitty
 
-First artist website template: persistent playback, shuffled video opening, music, films, and artist introduction. No artist photos or invented releases.
+Artist SPA adapted from sjefvanleeuwen/landing. Includes its full SCSS design system, custom navigation/footer, scroll reveals, dynamic artwork theme, MagazineAudioPlayer, global AudioService, and mini-player. The entry dialog starts sound from one explicit visitor gesture.
 
-## Develop
+Home uses a shuffled, preloaded two-video crossfade with Tikki-Tik, Likkie-Likkie playing independently. Clips are background material only; there are no video listings or direct video links. Music opens an editorial song page adapted from the original Solitude Machine layout. All views share the audio service and preserve playback on navigation/scroll. Audio loops on the opening.
 
-Node 22 recommended. `npm ci`, `npm run dev`. Validate with `npm test` and `npm run build`.
+The supplied Suno track is stored at public/audio/tikki-tik.m4a, with artwork at public/cover.jpeg. No runtime dependency on Suno media hosting. No invented BPM/key or artist biography.
 
-## Add media
-
-Commit videos (.mp4, .webm, .mov) and audio (.mp3, .wav, .ogg, .m4a) to `public/media/` or an existing media folder. The build discovers files and generates a manifest. MP4/H.264 and WebM recommended; MOV depends on browser and codec. File names become display titles. All videos appear in the opening and Films. Audio appears in Music; without audio, films are playable there. No template music is attributed to Doom Kitty.
-
-The muted opening uses two preloaded elements, a 750ms crossfade, and shuffle cycles without adjacent repeats. Network and codec support affect uninterrupted playback; the current frame remains when the next clip is not ready. One clip loops. Reduced motion starts paused. Audio starts on visitor selection.
-
-## Imported player
-
-`src/player/` adapted from https://github.com/sjefvanleeuwen/landing (ISC): AudioService, MagazineAudioPlayer, GlobalMiniPlayer, ColorThief. Mirror/upper/lower spectra, particles, seek, volume, video background synchronization, and mini-player on scroll. Audio survives anchor navigation.
-
-## Deployment
-
-Actions tests/builds PRs and deploys main to GitHub Pages. Select GitHub Actions as the Pages source in repository settings if needed. Media is discovered in the pipeline; adding media needs no code changes.
+Node 22. npm ci; npm test; npm run build. GitHub Actions validates and deploys main. Videos in media subfolders are recursively discovered at build time.

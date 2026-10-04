@@ -309,7 +309,7 @@ export class MagazineAudioPlayer extends HTMLElement {
         playPauseBtn.addEventListener('click', togglePlayback);
 
         // Auto-switch track on page load
-        if (src && audioService.currentSrc !== src) {
+        if (src && audioService.currentSrc !== src && !document.body.classList.contains('awaiting-entry')) {
             audioService.play(src, title, artist).then(() => {
                 updatePlayIcons();
             }).catch(e => console.warn("Autoplay blocked:", e));
@@ -658,7 +658,7 @@ export class GlobalMiniPlayer extends HTMLElement {
                 return;
             }
 
-            const localPlayer = document.querySelector('m-audio-player');
+            const localPlayer = Array.from(document.querySelectorAll('m-audio-player')).find(player => !player.closest('[hidden]'));
             let shouldBeVisible = true;
 
             if (localPlayer) {
