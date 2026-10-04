@@ -428,15 +428,25 @@ export class MagazineAudioPlayer extends HTMLElement {
         audioService.on('ended', this._onPause);
 
         const resize = () => {
-            canvas.width = canvas.clientWidth || canvas.parentElement?.clientWidth || window.innerWidth;
-            canvas.height = canvas.clientHeight || canvas.parentElement?.clientHeight || window.innerHeight;
+            const width = canvas.clientWidth || canvas.parentElement?.clientWidth || window.innerWidth;
+            const height = canvas.clientHeight || canvas.parentElement?.clientHeight || window.innerHeight;
+            if(canvas.width !== width)canvas.width = width;
+            if(canvas.height !== height)canvas.height = height;
         };
 
         window.addEventListener('resize', resize, {signal:this.globalListeners.signal});
         resize();
 
-        const draw = () => {
+        let lastDraw = 0;
+        const mobileRendering = window.matchMedia('(pointer:coarse)');
+        const draw = (timestamp: number) => {
             if (!this.ctx) return;
+            const rect = canvas.getBoundingClientRect();
+            if(document.hidden || !canvas.getClientRects().length || rect.bottom < 0 || rect.top > window.innerHeight || (mobileRendering.matches && timestamp-lastDraw < 1000/30)) {
+                this.animationId = requestAnimationFrame(draw);
+                return;
+            }
+            lastDraw = timestamp;
             this.ctx.clearRect(0, 0, canvas.width, canvas.height);
             
             const colorPrimary = themeColors.primary;
@@ -477,12 +487,12 @@ export class MagazineAudioPlayer extends HTMLElement {
             this.ctx.lineTo(startX + (actualBarCount * (barWidth + spacing)), centerY);
             this.ctx.stroke();
 
+            const portraitHome = this.closest('.home-player') && window.matchMedia('(max-width:900px) and (orientation:portrait)').matches;
             for (let i = 0; i < actualBarCount; i++) {
                 let targetH = 2; 
                 if (dataArray) {
                     const index = Math.floor(Math.pow(i / actualBarCount, 1.45) * (dataArray.length * 0.75));
                     const value = dataArray[index] || 0;
-                    const portraitHome = this.closest('.home-player') && window.matchMedia('(max-width:900px) and (orientation:portrait)').matches;
                     const hScale = portraitHome ? 0.4 : (this.vizMode === 'both' ? 0.15 : 0.25);
                     targetH = (Math.pow(value / 255, 1.5)) * (canvas.height * hScale);
                     if (targetH < 2) targetH = 2;
