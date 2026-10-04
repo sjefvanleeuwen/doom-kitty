@@ -9,7 +9,30 @@ import {ShuffleBag} from './shuffle.mjs';
 interface Media{src:string;title:string;type:'audio'|'video'}
 class OpeningFilms{
 private videos=Array.from(document.querySelectorAll<HTMLVideoElement>('.video-stage video'));private bag:ShuffleBag;private active=0;private prepared=false;private switching=false;private paused=true;private failed=new Set<string>();
-constructor(clips:Media[]){this.bag=new ShuffleBag(clips.map(c=>c.src));const button=document.querySelector<HTMLButtonElement>('#motion')!;button.addEventListener('click',()=>{this.paused=!this.paused;this.updateButton();if(this.paused)this.videos.forEach(v=>v.pause());else this.videos[this.active].play().catch(()=>{this.paused=true;this.updateButton();});});this.updateButton();if(!clips.length){document.querySelector('#film-status')!.textContent='Opening films unavailable';button.hidden=true;return;}const first=this.videos[0];first.src=this.bag.next()!;first.loop=clips.length===1;first.classList.add('active');if(!this.paused)first.play().catch(()=>{this.paused=true;this.updateButton();});if(clips.length>1){this.prepare();for(const video of this.videos){video.addEventListener('timeupdate',()=>{if(video===this.videos[this.active]&&Number.isFinite(video.duration)&&video.duration-video.currentTime<.85)void this.advance();});video.addEventListener('ended',()=>{if(video===this.videos[this.active])void this.advance();});video.addEventListener('error',()=>{this.failed.add(video.getAttribute('src')||'');if(this.failed.size>=clips.length){document.querySelector('#film-status')!.textContent='Opening films unavailable';return;}if(video===this.videos[this.active])void this.advance();else this.prepare();});}}}
+constructor(clips:Media[]){this.installRecovery();this.bag=new ShuffleBag(clips.map(c=>c.src));const button=document.querySelector<HTMLButtonElement>('#motion')!;button.addEventListener('click',()=>{this.paused=!this.paused;this.updateButton();if(this.paused)this.videos.forEach(v=>v.pause());else this.videos[this.active].play().catch(()=>{this.paused=true;this.updateButton();});});this.updateButton();if(!clips.length){document.querySelector('#film-status')!.textContent='Opening films unavailable';button.hidden=true;return;}const first=this.videos[0];first.src=this.bag.next()!;first.loop=clips.length===1;first.classList.add('active');if(!this.paused)first.play().catch(()=>{this.paused=true;this.updateButton();});if(clips.length>1){this.prepare();for(const video of this.videos){video.addEventListener('timeupdate',()=>{if(video===this.videos[this.active]&&Number.isFinite(video.duration)&&video.duration-video.currentTime<.85)void this.advance();});video.addEventListener('ended',()=>{if(video===this.videos[this.active])void this.advance();});video.addEventListener('error',()=>{this.failed.add(video.getAttribute('src')||'');if(this.failed.size>=clips.length){document.querySelector('#film-status')!.textContent='Opening films unavailable';return;}if(video===this.videos[this.active])void this.advance();else this.prepare();});}}}
+
+private recoveryTimer:number|undefined;
+private recoverPlayback=()=>{
+ if(this.paused||this.switching||document.hidden)return;
+ const video=this.videos[this.active];
+ if(!video?.getAttribute('src'))return;
+ if(video.ended){void this.advance();return;}
+ if(video.paused)void video.play().catch(()=>{});
+};
+private queueRecovery=()=>{
+ window.clearTimeout(this.recoveryTimer);
+ this.recoveryTimer=window.setTimeout(this.recoverPlayback,300);
+};
+private installRecovery(){
+ window.addEventListener('resize',this.queueRecovery,{passive:true});
+ window.visualViewport?.addEventListener('resize',this.queueRecovery,{passive:true});
+ document.addEventListener('visibilitychange',this.queueRecovery);
+ for(const video of this.videos){
+  video.addEventListener('pause',()=>{if(video===this.videos[this.active])this.queueRecovery();});
+  video.addEventListener('canplay',this.recoverPlayback);
+ }
+}
+
 public start(){this.paused=false;this.updateButton();void this.videos[this.active].play().catch(()=>{});}
 private updateButton(){const button=document.querySelector<HTMLButtonElement>('#motion')!;button.textContent=this.paused?'Play visuals ▷':'Pause visuals Ⅱ';button.setAttribute('aria-pressed',String(this.paused));}
 private prepare(){const next=this.videos[1-this.active];this.prepared=false;let src=this.bag.next();for(let i=0;i<this.failed.size&&src&&this.failed.has(src);i++)src=this.bag.next();if(!src||this.failed.has(src))return;next.src=src;next.load();const ready=()=>{this.prepared=true;if(this.videos[this.active].ended)void this.advance();};if(next.readyState>=2)ready();else next.addEventListener('loadeddata',ready,{once:true});}
@@ -80,6 +103,8 @@ const ambientContext=ambientCanvas.getContext('2d');
 const portrait=matchMedia('(max-width: 900px) and (orientation: portrait)');
 function sampleAmbilight(){
  if(ambientContext&&portrait.matches&&!document.hidden&&!document.querySelector('[data-view="home"]')?.hasAttribute('hidden')){
+  const home=document.querySelector('.home-player')?.getBoundingClientRect();
+  if(!home || home.bottom<0 || home.top>window.innerHeight)return;
   const videos=Array.from(document.querySelectorAll<HTMLVideoElement>('.video-stage video')).filter(video=>video.readyState>=2);
   if(videos.length){
    try{
@@ -93,5 +118,5 @@ function sampleAmbilight(){
   }
  }
 }
-window.setInterval(sampleAmbilight,200);
+window.setInterval(sampleAmbilight,400);
 portrait.addEventListener('change',sampleAmbilight);
