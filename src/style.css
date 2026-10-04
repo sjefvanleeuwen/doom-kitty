@@ -146,3 +146,26 @@ m-nav .logo img{width:140px;height:60px;object-fit:contain;filter:url(#logo-tran
  .home-player .visualizer-placeholder { height:var(--mobile-analyzer-height) !important; }
  .home-player canvas#visualizer { height:var(--mobile-analyzer-height) !important; }
 }
+
+/* Compact, safe-area-aware mini player on phones in either orientation. */
+@media (max-width:768px), (max-height:500px) and (pointer:coarse) {
+ .mini-player.global-mini {
+   box-sizing:border-box;
+   left:max(12px,env(safe-area-inset-left));
+   right:max(12px,env(safe-area-inset-right));
+   bottom:max(12px,env(safe-area-inset-bottom));
+   width:auto;
+   max-width:420px;
+   margin-left:auto;
+   height:60px;
+   padding:0 12px;
+   border-radius:10px;
+   overflow:hidden;
+ }
+ .mini-player.global-mini .mini-track-info { min-width:0; margin-right:10px; }
+ .mini-player.global-mini .mini-track-info h4 { font-size:10px; line-height:1.5; }
+ .mini-player.global-mini .mini-track-info p { font-size:8px; letter-spacing:.1em; }
+ .mini-player.global-mini .mini-controls { flex:none; }
+ .mini-player.global-mini .mini-play-btn { width:44px; height:44px; flex:none; }
+ .mini-player.global-mini .mini-progress-container { height:4px; }
+}
