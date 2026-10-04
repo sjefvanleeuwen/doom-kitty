@@ -302,6 +302,7 @@ export class MagazineAudioPlayer extends HTMLElement {
 
         const togglePlayback = (e: Event) => {
             e.stopPropagation();
+            if (!src) { audioService.audio.dispatchEvent(new Event('playblocked')); return; }
             audioService.toggle(src, title, artist);
             updatePlayIcons();
         };
