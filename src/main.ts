@@ -15,6 +15,8 @@ private updateButton(){const button=document.querySelector<HTMLButtonElement>('#
 private prepare(){const next=this.videos[1-this.active];this.prepared=false;let src=this.bag.next();for(let i=0;i<this.failed.size&&src&&this.failed.has(src);i++)src=this.bag.next();if(!src||this.failed.has(src))return;next.src=src;next.load();const ready=()=>{this.prepared=true;if(this.videos[this.active].ended)void this.advance();};if(next.readyState>=2)ready();else next.addEventListener('loadeddata',ready,{once:true});}
 private async advance(){if(this.switching||!this.prepared||this.paused)return;this.switching=true;const old=this.videos[this.active],next=this.videos[1-this.active];try{next.currentTime=0;await next.play();if(this.paused){next.pause();return;}next.classList.add('active');old.classList.remove('active');await new Promise(resolve=>setTimeout(resolve,750));old.pause();this.active=1-this.active;this.prepare();}catch{this.paused=true;this.updateButton();}finally{this.switching=false;}}
 }
+const enterButton=document.querySelector<HTMLButtonElement>('#enter-site')!;
+const entranceStatus=document.querySelector('#entrance-status')!;
 let song:string|undefined;
 const title='Tikki-Tik, Likkie-Likkie';
 
@@ -32,9 +34,9 @@ async function prepareMedia(){
  const stage=document.createElement('div');stage.className='video-stage';stage.innerHTML='<video muted playsinline preload="auto"></video><video muted playsinline preload="auto"></video>';bg.prepend(stage);
  opening=new OpeningFilms(media.filter(m=>m.type==='video'));
  if(!matchMedia('(prefers-reduced-motion: reduce)').matches)opening.start();
- if(song){void audioService.play(song,title,'Doom Kitty').catch(()=>{});}
- else{error.textContent='The track MP3 is not available in the repository yet.';document.querySelectorAll<HTMLButtonElement>('.play-pause-btn').forEach(button=>{button.disabled=true;button.title='Track file unavailable';});}
- }catch{error.textContent='Media could not be loaded. Please refresh to retry.';}
+ if(song){enterButton.disabled=false;enterButton.textContent='ENTER SITE ↗';}
+ else{entranceStatus.textContent='The music file is unavailable. Please refresh.';error.textContent='The track MP3 is not available in the repository yet.';document.querySelectorAll<HTMLButtonElement>('.play-pause-btn').forEach(button=>{button.disabled=true;button.title='Track file unavailable';});}
+ }catch{entranceStatus.textContent='Media could not be loaded. Please refresh to retry.';error.textContent='Media could not be loaded. Please refresh to retry.';}
 
 }
 void prepareMedia();
@@ -43,6 +45,16 @@ audioService.audio.loop=true;
 audioService.on('error',()=>{error.textContent='Audio could not be loaded. Use the player to retry.';});
 audioService.on('playblocked',()=>{});
 audioService.on('play',()=>{error.textContent='';});
+enterButton.addEventListener('click',()=>{
+ if(!song)return;
+ // Play inside the gesture, before any transitions or awaits.
+ const playback=audioService.play(song,title,'Doom Kitty');
+ document.body.classList.remove('awaiting-entry');
+ document.querySelector('#app-root')!.removeAttribute('inert');
+ document.querySelector<HTMLElement>('#entrance')!.hidden=true;
+ playback.catch(()=>{error.textContent='Tap the player’s play button to retry.';});
+ document.querySelector<HTMLButtonElement>('.home-player .play-pause-btn')?.focus({preventScroll:true});
+});
 
 function route(){const path=location.hash.replace(/^#\/?/,'')||'home';const view=path==='music/tikki-tik'?'song':path==='music'?'music':path==='about'?'about':'home';document.querySelectorAll<HTMLElement>('[data-view]').forEach(el=>{el.hidden=el.dataset.view!==view;});document.querySelectorAll('m-nav a').forEach(a=>{a.classList.toggle('active',a.getAttribute('href')===location.hash||(!location.hash&&a.getAttribute('href')==='#/'));});window.scrollTo(0,0);initDynamicTheming();document.dispatchEvent(new CustomEvent('page-loaded',{detail:{path:view}}));}
 window.addEventListener('hashchange',route);route();

@@ -29,7 +29,7 @@ class MagazineNav extends HTMLElement {
 
   connectedCallback(): void {
     this.innerHTML = `
-      <a href="#/" class="logo">DOOM KITTY</a>
+      <a href="#/" class="logo" aria-label="Doom Kitty home"><img src="./doom-kitty-logo.png" alt="Doom Kitty"></a>
       
       <button class="nav-toggle" aria-label="Toggle navigation">
         <span class="bar"></span>
