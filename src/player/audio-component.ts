@@ -428,8 +428,8 @@ export class MagazineAudioPlayer extends HTMLElement {
         audioService.on('ended', this._onPause);
 
         const resize = () => {
-            canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
-            canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
+            canvas.width = canvas.clientWidth || canvas.parentElement?.clientWidth || window.innerWidth;
+            canvas.height = canvas.clientHeight || canvas.parentElement?.clientHeight || window.innerHeight;
         };
 
         window.addEventListener('resize', resize, {signal:this.globalListeners.signal});
