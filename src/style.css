@@ -46,3 +46,68 @@ m-nav .logo img{width:140px;height:60px;object-fit:contain;filter:url(#logo-tran
 @keyframes eye-flash{0%{transform:scaleY(1);filter:drop-shadow(0 0 4px #fff)}45%{filter:drop-shadow(0 0 30px #ffe3a3) drop-shadow(0 0 10px #fff)}100%{filter:drop-shadow(0 0 4px #fff)}}
 @keyframes entrance-exit{0%,35%{opacity:1}100%{opacity:0;visibility:hidden}}
 @media(prefers-reduced-motion:reduce){.logo-cat,.logo-tail,.logo-eyes,.logo-type,#entrance.entering,#entrance.entering .logo-eyes{animation:none}#entrance.entering{opacity:0;visibility:hidden}}
+
+/* Portrait phones keep the complete film; landscape returns to the immersive hero. */
+@media (max-width: 900px) and (orientation: portrait) {
+  .home-player .audio-player-hero {
+    height: auto !important;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 90px 0 24px;
+    background: radial-gradient(ellipse at 50% 70%, #28221955, transparent 70%), #050505;
+  }
+  .home-player .hero-image {
+    position: relative !important;
+    inset: auto !important;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    flex: none;
+  }
+  .home-player .video-stage video { object-fit: contain; }
+  .home-player .hero-image::after,
+  .home-player .overlay-gradient { display: none; }
+  .home-player .opening-controls { top: 70px; }
+  .home-player .player-content-wrapper {
+    width: calc(100% - 48px) !important;
+    height: auto !important;
+    margin: 28px auto 0 !important;
+    transform: none !important;
+  }
+  .home-player .top-info { grid-template-columns: minmax(0, 1fr) auto; gap: 12px; margin-bottom: 12px !important; }
+  .home-player .track-info { margin-bottom: 0; }
+  .home-player .track-title { font-size: clamp(13px, 3.5vw, 19px) !important; overflow-wrap: anywhere; }
+  .home-player .time-display-large { font-size: 12px !important; text-align: right !important; }
+  .home-player .visualizer-placeholder { height: 100px !important; }
+  .home-player canvas#visualizer {
+    top: calc(90px + 56.25vw + 95px) !important;
+    height: 95px !important;
+  }
+  .home-player .progress-bar-container {
+    position: relative !important;
+    bottom: auto !important;
+    padding: 0 24px !important;
+    margin: 12px 0 16px;
+  }
+  .home-player .player-controls-bar {
+    position: relative !important;
+    bottom: auto !important;
+    padding: 0 14px !important;
+    gap: 8px;
+  }
+  .home-player .controls-left, .home-player .controls-right { gap: 4px !important; }
+  .home-player .volume-slider { width: 40px !important; opacity: 1 !important; }
+  .home-player .time-progress { font-size: 8px !important; letter-spacing: .04em !important; white-space: nowrap; }
+}
+@media (max-width: 1100px) and (orientation: landscape) and (max-height: 600px) {
+  .home-player .audio-player-hero { height: 100svh !important; min-height: 0; }
+  .home-player .player-content-wrapper { transform: none !important; }
+  .home-player .top-info { grid-template-columns: minmax(0, 1fr) auto; gap: 16px; margin-bottom: 10px !important; }
+  .home-player .track-info { margin-bottom: 0; }
+  .home-player .visualizer-placeholder { height: 70px !important; }
+  .home-player .player-controls-bar { bottom: max(12px, env(safe-area-inset-bottom)) !important; }
+  .home-player .progress-bar-container { bottom: 65px !important; }
+  .home-player .opening-controls { top: 75px; }
+}
