@@ -61,3 +61,37 @@ enterButton.addEventListener('click',()=>{
 
 function route(){const path=location.hash.replace(/^#\/?/,'')||'home';const view=path==='music/tikki-tik'?'song':path==='music'?'music':path==='about'?'about':'home';document.querySelectorAll<HTMLElement>('[data-view]').forEach(el=>{el.hidden=el.dataset.view!==view;});document.querySelectorAll('m-nav a').forEach(a=>{a.classList.toggle('active',a.getAttribute('href')===location.hash||(!location.hash&&a.getAttribute('href')==='#/'));});window.scrollTo(0,0);initDynamicTheming();document.dispatchEvent(new CustomEvent('page-loaded',{detail:{path:view}}));}
 window.addEventListener('hashchange',route);route();
+
+
+// Sample the existing opening videos, avoiding another decoder or media download.
+const navigation = document.querySelector<HTMLElement>('m-nav');
+const updateNavigationHeight = () => {
+ if(navigation)document.documentElement.style.setProperty('--navigation-height',navigation.getBoundingClientRect().height+'px');
+};
+if(navigation)new ResizeObserver(updateNavigationHeight).observe(navigation);
+updateNavigationHeight();
+
+const ambientCanvas=document.createElement('canvas');
+ambientCanvas.className='video-ambilight';
+ambientCanvas.width=64;ambientCanvas.height=36;
+ambientCanvas.setAttribute('aria-hidden','true');
+document.querySelector('.home-player')?.prepend(ambientCanvas);
+const ambientContext=ambientCanvas.getContext('2d');
+const portrait=matchMedia('(max-width: 900px) and (orientation: portrait)');
+function sampleAmbilight(){
+ if(ambientContext&&portrait.matches&&!document.hidden&&!document.querySelector('[data-view="home"]')?.hasAttribute('hidden')){
+  const videos=Array.from(document.querySelectorAll<HTMLVideoElement>('.video-stage video')).filter(video=>video.readyState>=2);
+  if(videos.length){
+   try{
+    ambientContext.clearRect(0,0,64,36);
+    for(const video of videos){
+     ambientContext.globalAlpha=Number(getComputedStyle(video).opacity);
+     ambientContext.drawImage(video,0,0,64,36);
+    }
+    ambientContext.globalAlpha=1;
+   }catch{/* Retain the neutral background if a frame cannot be sampled. */}
+  }
+ }
+}
+window.setInterval(sampleAmbilight,200);
+portrait.addEventListener('change',sampleAmbilight);
